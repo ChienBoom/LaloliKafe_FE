@@ -1,5 +1,7 @@
+import AreaTable from './AreaTable'
+
 export function Area(props: any) {
-  return <>area</>
+  return <AreaTable />
 }
 
 export default Area

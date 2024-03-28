@@ -6,7 +6,7 @@ export function AppHeader(props: any) {
     {
       key: '1',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        <a rel="noopener noreferrer" href="http://localhost:4321/log/login">
           Đăng xuất
         </a>
       )

@@ -1,5 +1,7 @@
+import TableTb from './TableTb'
+
 export function Table(props: any) {
-  return <>Table</>
+  return <TableTb />
 }
 
 export default Table

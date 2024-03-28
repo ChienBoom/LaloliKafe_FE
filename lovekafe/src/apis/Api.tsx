@@ -2,6 +2,9 @@ import { notification } from 'antd'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { getAxiosParams, sleep } from '../utils/Utils'
 import { Category } from './Category'
+import { UserDetail } from './UserDetail'
+import { Area } from './Area'
+import { Table } from './Table'
 
 const responseBody = (response: AxiosResponse) => response.data
 
@@ -70,7 +73,10 @@ export const requests = {
 /**
  * Tạo các file API tương ứng rồi import*/
 const Api = {
-  Category
+  Category,
+  UserDetail,
+  Area,
+  Table
 } as any
 
 export default Api

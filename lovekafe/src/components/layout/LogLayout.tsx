@@ -6,14 +6,14 @@ const { Title } = Typography
 
 export function LogLayout(props: any) {
   return (
-    <Flex className="justify-center">
-      <Flex vertical className="items-center">
-        <Image src={logo} width={400} height={400} />
+    <Flex>
+      <Flex vertical className="w-2/3 items-center">
+        <Image src={logo} width={400} height={400} preview={false} />
         <Title level={1} type="warning" italic>
           LoveKafe
         </Title>
       </Flex>
-      <Flex>
+      <Flex className="w-1/3">
         <Outlet />
       </Flex>
     </Flex>

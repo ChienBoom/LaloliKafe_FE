@@ -10,6 +10,7 @@ import Report from '../components/management/report/Report'
 import Table from '../components/management/table/Table'
 import Food from '../components/management/food/Food'
 import Area from '../components/management/area/Area'
+import Category from '../components/management/category/Category'
 
 export const Router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const Router = createBrowserRouter([
       {
         path: 'management/staff',
         element: <Staff />
+      },
+      {
+        path: 'management/category',
+        element: <Category />
       },
       {
         path: 'management/drink',

@@ -1,14 +1,12 @@
 import { Button, Flex, Image, Popconfirm, Table, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
+import Api from '../../../apis/Api'
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
-import StaffForm from './StaffForm'
 import { useDispatch } from 'react-redux'
-import { StaffSlice } from './StaffSlice'
-import Search from 'antd/es/transfer/search'
-import { useAraSelector } from '../../../store/ConfigStore'
-import moment from 'moment'
+import { TableSlice } from './TableSlice'
+import TableForm from './TableForm'
 
-export function StaffTable(props: any) {
+export function TableTb(props: any) {
   const columns = [
     {
       title: 'STT',
@@ -19,38 +17,31 @@ export function StaffTable(props: any) {
       render: (text: any, record: any, index: any) => index + 1
     },
     {
-      title: 'Tên đầy đủ',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: 'Tên',
+      dataIndex: 'name',
+      key: 'name',
       width: '20%',
       align: 'center' as const
     },
     {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
+      title: 'Mã',
+      dataIndex: 'code',
+      key: 'code',
+      width: '10%',
+      align: 'center' as const
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: 'description',
+      key: 'description',
       width: '20%',
       align: 'center' as const
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      width: '10%',
-      align: 'center' as const
-    },
-    {
-      title: 'Giới tính',
-      dataIndex: 'sex',
-      key: 'sex',
-      width: '10%',
-      align: 'center' as const
-    },
-    {
-      title: 'Hình ảnh',
+      title: 'Khu vực',
       dataIndex: 'urlImage',
       key: 'urlImage',
-      width: '10%',
+      width: '20%',
       align: 'center' as const,
       render: (text: any, record: any, index: any) => (
         <Image
@@ -99,25 +90,20 @@ export function StaffTable(props: any) {
     }
   ]
 
-  const { staffData } = useAraSelector((state) => state.staff)
-
   const dispatch = useDispatch()
 
-  const [data, setData] = useState(staffData)
+  const [data, setData] = useState([])
 
   const handleAddButton = () => {
     dispatch(
-      StaffSlice.actions.handleStaffForm({
+      TableSlice.actions.handleTableForm({
         type: 'ADD',
-        staff: {
+        table: {
           id: '',
-          username: '',
-          email: '',
-          fullName: '',
-          dateOfBirth: moment(moment.now()).format(),
-          address: '',
-          sex: '',
-          urlImage: ''
+          name: '',
+          code: '',
+          areaId: '',
+          description: ''
         }
       })
     )
@@ -125,33 +111,32 @@ export function StaffTable(props: any) {
 
   const handleClickUpdate = (record: any) => {
     dispatch(
-      StaffSlice.actions.handleStaffForm({
+      TableSlice.actions.handleTableForm({
         type: 'UPDATE',
-        staff: record
+        table: record
       })
     )
   }
 
   useEffect(() => {
-    setData(staffData)
-  }, [staffData])
+    Api.Table.get().then((res: any) => setData(res.data))
+  }, [])
   return (
     <Flex vertical>
       <Flex className="mt-[20px] bg-white h-[60px]">
-        <Flex className="items-center text-blue-500 ml-[20px] font-bold w-3/5">
+        <Flex className="items-center text-blue-500 ml-[20px] font-bold">
           <SwapOutlined />
-          <div className="text-2xl ml-[10px]">Quản lý nhân viên</div>
+          <div className="text-2xl ml-[10px]">Quản lý bàn</div>
         </Flex>
-        <Flex className="mt-[10px] h-[40px] items-center">
-          <Search placeholder="Tìm kiếm tên nhân viên" onChange={(e) => console.log('search')} />
-          <Button className="absolute right-20" onClick={handleAddButton}>
-            Thêm mới
-            <PlusOutlined />
-          </Button>
-        </Flex>
+        <Button className="mt-[10px] absolute right-20" onClick={handleAddButton}>
+          Thêm mới
+          <PlusOutlined />
+        </Button>
       </Flex>
       <Table columns={columns} dataSource={data} rowKey="id" pagination={false} />
-      <StaffForm />
+      <TableForm />
     </Flex>
   )
 }
+
+export default TableTb
