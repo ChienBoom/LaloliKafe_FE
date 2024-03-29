@@ -1,13 +1,12 @@
-import { Button, Flex, Image, Input, message, Popconfirm, Table, Tooltip } from 'antd'
-import { useEffect, useState } from 'react'
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
-import { CategoryForm } from './CategoryForm'
+import { Button, Flex, Image, Input, Popconfirm, Table, Tooltip } from 'antd'
+import ProductForm from './ProductForm'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { CategorySlice } from './CategorySlice'
 import Api from '../../../apis/Api'
-import { useNavigate } from 'react-router-dom'
+import { ProductSlice } from './ProductSlice'
 
-export function CategoryTable(props: any) {
+export function ProductTable(props: any) {
   const columns = [
     {
       title: 'STT',
@@ -32,17 +31,26 @@ export function CategoryTable(props: any) {
       align: 'center' as const
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
+      title: 'Giá',
+      dataIndex: 'price',
+      key: 'price',
+      width: '10%',
+      align: 'center' as const,
+      render: (text: any, record: any, index: any) => <>{text} VND</>
+    },
+    {
+      title: 'Danh mục',
+      dataIndex: 'category',
+      key: 'category',
       width: '20%',
-      align: 'center' as const
+      align: 'center' as const,
+      render: (text: any, record: any, index: any) => <>{text.name}</>
     },
     {
       title: 'Hình ảnh',
       dataIndex: 'urlImage',
       key: 'urlImage',
-      width: '20%',
+      width: '10%',
       align: 'center' as const,
       render: (text: any, record: any, index: any) => <Image width={30} height={30} src={record.urlImage} />
     },
@@ -86,9 +94,7 @@ export function CategoryTable(props: any) {
   ]
 
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-
-  // const { loadingData, categoryData } = useAraSelector((state) => state.category)
+  const { categoryId } = props
 
   const [data, setData] = useState([])
   const [dataShow, setDataShow] = useState([])
@@ -96,12 +102,21 @@ export function CategoryTable(props: any) {
 
   const handleAddButton = () => {
     dispatch(
-      CategorySlice.actions.handleCategoryForm({
+      ProductSlice.actions.handleProductForm({
         type: 'ADD',
-        category: {
+        product: {
           id: '',
           name: '',
           code: '',
+          categoryId: '',
+          category: {
+            id: '',
+            name: '',
+            code: '',
+            description: '',
+            urlImage: ''
+          },
+          price: 40000.0,
           description: '',
           urlImage: ''
         }
@@ -110,37 +125,28 @@ export function CategoryTable(props: any) {
   }
 
   const handleClickUpdate = (record: any) => {
+    console.log(record)
     dispatch(
-      CategorySlice.actions.handleCategoryForm({
+      ProductSlice.actions.handleProductForm({
         type: 'UPDATE',
-        category: record
+        product: record
       })
     )
   }
 
-  const handleConfirmDelete = (id: any) => {
-    Api.Category.delete(id)
-      .then((response: any) => {
-        message.success('Xóa danh mục thành công!')
-        Api.Category.get().then((res: any) => setData(res.data))
-      })
-      .catch((error: any) => {
-        message.error('Xóa danh mục thất bại!')
-      })
-  }
+  const handleConfirmDelete = (id: any) => {}
 
-  const handleReloadData = () => {
-    Api.Category.get().then((res: any) => {
-      setData(res.data)
-      setDataShow(res.data)
-    })
-  }
+  const handleReloadData = () => {}
 
   useEffect(() => {
-    Api.Category.get().then((res: any) => {
-      setData(res.data)
-      setDataShow(res.data)
-    })
+    Api.Product.get({ categoryId: categoryId })
+      .then((response: any) => {
+        setData(response.data)
+        setDataShow(response.data)
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
   }, [])
 
   useEffect(() => {
@@ -168,11 +174,11 @@ export function CategoryTable(props: any) {
       <Flex className="mt-[20px] bg-white h-[60px]">
         <Flex className="items-center text-blue-500 ml-[20px] font-bold w-3/5">
           <SwapOutlined />
-          <div className="text-2xl ml-[10px]">Quản lý danh mục sản phẩm</div>
+          <div className="text-2xl ml-[10px]">Quản lý sản phẩm</div>
         </Flex>
         <Flex className="mt-[10px] h-[40px] items-center">
           <Input.Search
-            placeholder="Tìm kiếm tên/mã khu vực"
+            placeholder="Tìm kiếm tên/mã bàn"
             allowClear
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -183,20 +189,10 @@ export function CategoryTable(props: any) {
           </Button>
         </Flex>
       </Flex>
-      <Table
-        columns={columns}
-        dataSource={dataShow}
-        rowKey="id"
-        pagination={false}
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: () => {
-              navigate('/management/category/' + record.id)
-            }
-          }
-        }}
-      />
-      <CategoryForm onReloadData={handleReloadData} />
+      <Table columns={columns} dataSource={dataShow} rowKey="id" pagination={false} />
+      <ProductForm onReloadData={handleReloadData} />
     </Flex>
   )
 }
+
+export default ProductTable

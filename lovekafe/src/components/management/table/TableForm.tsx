@@ -21,7 +21,7 @@ export function TableForm(props: any) {
 
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
-  const [areaName, setAreaName] = useState<any>('Tầng 1 - Trong nhà')
+  const [areaName, setAreaName] = useState<any>('')
   const [table, setTable] = useState<TableModel>({
     id: '',
     name: '',
@@ -86,16 +86,6 @@ export function TableForm(props: any) {
         break
     }
   }
-
-  useEffect(() => {
-    Api.Area.get()
-      .then((res: any) => {
-        console.log(res.data)
-      })
-      .catch((error: any) => {
-        console.log(error)
-      })
-  }, [])
 
   useEffect(() => {
     switch (openForm.type) {

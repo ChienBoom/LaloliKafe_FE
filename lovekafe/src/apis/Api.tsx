@@ -5,6 +5,7 @@ import { Category } from './Category'
 import { UserDetail } from './UserDetail'
 import { Area } from './Area'
 import { Table } from './Table'
+import { Product } from './Product'
 
 const responseBody = (response: AxiosResponse) => response.data
 
@@ -76,7 +77,8 @@ const Api = {
   Category,
   UserDetail,
   Area,
-  Table
+  Table,
+  Product
 } as any
 
 export default Api

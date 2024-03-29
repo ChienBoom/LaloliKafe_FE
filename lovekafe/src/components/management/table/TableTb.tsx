@@ -169,7 +169,7 @@ export function TableTb(props: any) {
         </Flex>
         <Flex className="mt-[10px] h-[40px] items-center">
           <Input.Search
-            placeholder="Tìm kiếm tên/mã bàn"
+            placeholder="Tìm kiếm tên/mã sản phẩm"
             allowClear
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}

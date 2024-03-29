@@ -19,10 +19,10 @@ export function CategoryForm(props: any) {
   const [form] = useForm()
 
   const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [img, setImg] = useState<any>('')
 
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
-  const [img, setImg] = useState<any>('')
   const [category, setCategory] = useState<CategoryModel>({
     id: '',
     name: '',
