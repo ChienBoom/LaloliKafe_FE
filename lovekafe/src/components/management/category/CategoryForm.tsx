@@ -1,14 +1,14 @@
-import { Button, Flex, Input, message, Typography, Upload } from 'antd'
+import { Form, Input, message, Upload, UploadFile } from 'antd'
 import { useDispatch } from 'react-redux'
 import { useAraSelector } from '../../../store/ConfigStore'
 import ChDrawer from '../../ChComponent/ChDrawer'
 import { CategorySlice } from './CategorySlice'
 import { useEffect, useState } from 'react'
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import Api from '../../../apis/Api'
 import UploadService from '../../../services/uploadFile/UploadService'
-
-const { Title } = Typography
+import { useForm } from 'antd/es/form/Form'
+import { CategoryModel } from '../../../models/CategoryModel'
 
 export function CategoryForm(props: any) {
   const dispatch = useDispatch()
@@ -16,10 +16,14 @@ export function CategoryForm(props: any) {
   const { openForm } = useAraSelector((state) => state.category)
   const { onReloadData } = props
 
+  const [form] = useForm()
+
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [img, setImg] = useState<any>('')
-  const [category, setCategory] = useState({
+  const [category, setCategory] = useState<CategoryModel>({
     id: '',
     name: '',
     code: '',
@@ -27,8 +31,9 @@ export function CategoryForm(props: any) {
     urlImage: ''
   })
 
-  const handleChangeUpload = (e: any) => {
-    setImg(e.file.originFileObj)
+  const handleChangeUpload = (lstFile: any) => {
+    setFileList(lstFile.fileList)
+    lstFile.fileList.length > 0 ? setImg(lstFile.fileList[0].originFileObj) : setImg('')
   }
 
   const handleCloseForm = () => {
@@ -44,22 +49,17 @@ export function CategoryForm(props: any) {
         }
       })
     )
+    setFileList([])
     setImg('')
   }
 
-  const handleSaveForm = async () => {
-    if (img != '') {
-      var urlImg = await UploadService(img)
-      console.log('urlImg:', urlImg)
-    }
+  const handleSaveForm = async (values: any) => {
+    var urlImg = await UploadService(img)
     switch (openForm.type) {
       case 'ADD':
-        Api.Category.post({
-          name: category.name,
-          code: category.code,
-          description: category.description,
-          urlImage: urlImg ?? ''
-        })
+        values.urlImage = urlImg ?? ''
+        console.log('category:', values)
+        Api.Category.post(values)
           .then((response: any) => {
             message.success('Thêm mới danh mục thành công!')
             handleCloseForm()
@@ -70,13 +70,10 @@ export function CategoryForm(props: any) {
           })
         break
       case 'UPDATE':
-        Api.Category.put(category.id, {
-          id: category.id,
-          name: category.name,
-          code: category.code,
-          description: category.description,
-          urlImage: urlImg ?? category.urlImage
-        })
+        values.urlImage = urlImg ?? category.urlImage
+        values.id = category.id
+        console.log('category:', values)
+        Api.Category.put(category.id, values)
           .then((response: any) => {
             message.success('Cập nhật danh mục thành công!')
             handleCloseForm()
@@ -96,17 +93,19 @@ export function CategoryForm(props: any) {
       case 'ADD':
         setTitle('Thêm mới danh mục')
         setCategory(openForm.category)
+        form.setFieldsValue(openForm.category)
         setOpen(true)
         break
       case 'UPDATE':
         setTitle('Sửa danh mục')
         setCategory(openForm.category)
-        console.log('category: ' + openForm.category)
+        form.setFieldsValue(openForm.category)
         setOpen(true)
         break
       case 'CLOSE':
         setTitle('')
         setCategory(openForm.category)
+        form.setFieldsValue(openForm.category)
         setOpen(false)
         break
       default:
@@ -121,71 +120,39 @@ export function CategoryForm(props: any) {
       showFooterAction={true}
       open={open}
       onClose={handleCloseForm}
-      onFtSave={handleSaveForm}
+      onFtSave={() => form.submit()}
       closeIcon={true}
       iconTitle={<PlusOutlined />}
     >
-      <Flex>
-        <Flex vertical className="w-1/2 pr-[10px]">
-          <Title level={4}>Tên danh mục</Title>
-          <Input
-            className="h-[50px]"
-            value={category.name}
-            onChange={(e) =>
-              setCategory({
-                id: category.id,
-                name: e.target.value,
-                code: category.code,
-                description: category.description,
-                urlImage: category.urlImage
-              })
-            }
-          />
-        </Flex>
-        <Flex vertical className="w-1/2 pl-[10px]">
-          <Title level={4}>Mã danh mục</Title>
-          <Input
-            className="h-[50px]"
-            value={category.code}
-            onChange={(e) =>
-              setCategory({
-                id: category.id,
-                name: category.name,
-                code: e.target.value,
-                description: category.description,
-                urlImage: category.urlImage
-              })
-            }
-          />
-        </Flex>
-      </Flex>
-      <Flex vertical className="mt-[10px]">
-        <Title level={4}>Mô tả</Title>
-        <Input.TextArea
-          rows={4}
-          value={category.description}
-          onChange={(e) =>
-            setCategory({
-              id: category.id,
-              name: category.name,
-              code: category.code,
-              description: e.target.value,
-              urlImage: category.urlImage
-            })
-          }
-        />
-      </Flex>
-      <Flex vertical className="mt-[20px]">
-        <Title level={4}>Tải ảnh cho danh mục</Title>
-        <Upload
-          listType="picture-card"
-          onChange={handleChangeUpload}
-          // onPreview={onPreview}
-          maxCount={1}
-        >
-          {'Upload'}
-        </Upload>
-      </Flex>
+      <Form onFinish={handleSaveForm} layout="vertical" form={form}>
+        <div className="grid grid-cols-2 gap-2">
+          <Form.Item
+            label="Tên danh mục"
+            name="name"
+            rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
+          >
+            <Input size="large" />
+          </Form.Item>
+
+          <Form.Item
+            label="Mã danh mục"
+            name="code"
+            rules={[{ required: true, message: 'Vui lòng nhập mã danh mục!' }]}
+          >
+            <Input size="large" />
+          </Form.Item>
+        </div>
+
+        <Form.Item label="Mô tả" name="description">
+          <Input.TextArea rows={4} />
+        </Form.Item>
+
+        <Form.Item label="Tải ảnh lên" name="urlImg">
+          <Upload listType="picture-card" onChange={handleChangeUpload} fileList={fileList} maxCount={1}>
+            {'Upload'}
+          </Upload>
+        </Form.Item>
+      </Form>
     </ChDrawer>
   )
 }

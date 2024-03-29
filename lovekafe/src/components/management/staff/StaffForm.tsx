@@ -1,18 +1,17 @@
-import { Button, DatePicker, Flex, GetProp, Input, Select, Typography, Upload, UploadFile, UploadProps } from 'antd'
+import { DatePicker, Flex, Input, Select, Typography, Upload } from 'antd'
 import { useDispatch } from 'react-redux'
 import { useAraSelector } from '../../../store/ConfigStore'
 import ChDrawer from '../../ChComponent/ChDrawer'
 import { useEffect, useState } from 'react'
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { StaffSlice } from './StaffSlice'
 import dayjs from 'dayjs'
 import moment from 'moment'
+import { UserDetailModel } from '../../../models/UserDetailModel'
 
 const { Title } = Typography
 
 const dateFormat = 'DD/MM/YYYY'
-
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 export function StaffForm(props: any) {
   const dispatch = useDispatch()
@@ -30,7 +29,7 @@ export function StaffForm(props: any) {
   //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
   //   }
   // ])
-  const [staff, setStaff] = useState({
+  const [staff, setStaff] = useState<UserDetailModel>({
     id: '',
     username: '',
     email: '',

@@ -1,4 +1,5 @@
 import { AreaModel } from './AreaModel'
+import { OrderModel } from './OrderModel'
 
 export interface TableModel {
   id: string
@@ -6,6 +7,6 @@ export interface TableModel {
   code: string
   areaId: string
   area?: AreaModel
-  orders?: string
+  orders?: [OrderModel]
   description: string
 }

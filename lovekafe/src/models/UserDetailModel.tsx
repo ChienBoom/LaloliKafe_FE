@@ -7,5 +7,5 @@ export interface UserDetailModel {
   address: string
   sex: string
   appUser?: string
-  urlImage: string
+  urlImage?: string
 }

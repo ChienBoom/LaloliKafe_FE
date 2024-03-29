@@ -4,7 +4,6 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined }
 import { CategoryForm } from './CategoryForm'
 import { useDispatch } from 'react-redux'
 import { CategorySlice } from './CategorySlice'
-import { useAraSelector } from '../../../store/ConfigStore'
 import Api from '../../../apis/Api'
 
 export function CategoryTable(props: any) {
