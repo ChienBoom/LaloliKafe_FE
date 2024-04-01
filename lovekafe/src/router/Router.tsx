@@ -12,6 +12,8 @@ import Food from '../components/management/food/Food'
 import Area from '../components/management/area/Area'
 import Category from '../components/management/category/Category'
 import Product from '../components/management/product/Product'
+import Order from '../components/management/order/Order'
+import OrderTable from '../components/management/orderTable/OrderTable'
 
 export const Router = createBrowserRouter([
   {
@@ -57,6 +59,14 @@ export const Router = createBrowserRouter([
       {
         path: 'management/product',
         element: <Product />
+      },
+      {
+        path: 'management/orderTable',
+        element: <OrderTable />
+      },
+      {
+        path: 'management/orderTable/:tableId',
+        element: <Order />
       }
     ]
   },
