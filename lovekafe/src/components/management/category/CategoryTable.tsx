@@ -1,6 +1,13 @@
 import { Button, Flex, Image, Input, message, Popconfirm, Table, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  RetweetOutlined,
+  SwapOutlined
+} from '@ant-design/icons'
 import { CategoryForm } from './CategoryForm'
 import { useDispatch } from 'react-redux'
 import { CategorySlice } from './CategorySlice'
@@ -54,8 +61,14 @@ export function CategoryTable(props: any) {
       align: 'center' as const,
       render: (text: any, record: any, index: any) => (
         <>
+          <Tooltip placement="top" title="Sản phẩm" arrow={true}>
+            <Button onClick={() => navigate('/management/category/' + record.id)}>
+              <RetweetOutlined />
+            </Button>
+          </Tooltip>
+
           <Tooltip placement="top" title="Xem chi tiết" arrow={true}>
-            <Button>
+            <Button onClick={() => handleClickDetail(record)}>
               <EyeOutlined />
             </Button>
           </Tooltip>
@@ -94,6 +107,15 @@ export function CategoryTable(props: any) {
   const [dataShow, setDataShow] = useState([])
   const [searchValue, setSearchValue] = useState('')
 
+  const handleClickDetail = (record: any) => {
+    dispatch(
+      CategorySlice.actions.handleCategoryForm({
+        type: 'DETAIL',
+        category: record
+      })
+    )
+  }
+
   const handleAddButton = () => {
     dispatch(
       CategorySlice.actions.handleCategoryForm({
@@ -122,7 +144,7 @@ export function CategoryTable(props: any) {
     Api.Category.delete(id)
       .then((response: any) => {
         message.success('Xóa danh mục thành công!')
-        Api.Category.get().then((res: any) => setData(res.data))
+        handleReloadData()
       })
       .catch((error: any) => {
         message.error('Xóa danh mục thất bại!')
@@ -172,7 +194,7 @@ export function CategoryTable(props: any) {
         </Flex>
         <Flex className="mt-[10px] h-[40px] items-center">
           <Input.Search
-            placeholder="Tìm kiếm tên/mã khu vực"
+            placeholder="Tìm kiếm tên/mã danh mục"
             allowClear
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -188,13 +210,13 @@ export function CategoryTable(props: any) {
         dataSource={dataShow}
         rowKey="id"
         pagination={false}
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: () => {
-              navigate('/management/category/' + record.id)
-            }
-          }
-        }}
+        // onRow={(record, rowIndex) => {
+        //   return {
+        //     onClick: () => {
+        //       navigate('/management/category/' + record.id)
+        //     }
+        //   }
+        // }}
       />
       <CategoryForm onReloadData={handleReloadData} />
     </Flex>

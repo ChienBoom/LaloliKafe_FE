@@ -51,6 +51,10 @@ export const Router = createBrowserRouter([
         element: <Report />
       },
       {
+        path: 'management/category/:categoryId',
+        element: <Product />
+      },
+      {
         path: 'management/product',
         element: <Product />
       }

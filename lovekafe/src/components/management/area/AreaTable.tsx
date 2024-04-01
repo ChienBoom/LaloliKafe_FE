@@ -47,7 +47,7 @@ export function AreaTable(props: any) {
         <>
           <Tooltip placement="top" title="Xem chi tiết" arrow={true}>
             <Button>
-              <EyeOutlined />
+              <EyeOutlined onClick={() => handleClickDetail(record)} />
             </Button>
           </Tooltip>
 
@@ -82,6 +82,15 @@ export function AreaTable(props: any) {
   const [dataShow, setDataShow] = useState([])
   const [searchValue, setSearchValue] = useState('')
 
+  const handleClickDetail = (record: any) => {
+    dispatch(
+      AreaSlice.actions.handleAreaForm({
+        type: 'DETAIL',
+        area: record
+      })
+    )
+  }
+
   const handleAddButton = () => {
     dispatch(
       AreaSlice.actions.handleAreaForm({
@@ -109,7 +118,7 @@ export function AreaTable(props: any) {
     Api.Area.delete(id)
       .then((response: any) => {
         message.success('Xóa khu vực thành công!')
-        Api.Area.get().then((res: any) => setData(res.data))
+        handleReloadData()
       })
       .catch((error: any) => {
         message.error('Xóa khu vực thất bại!')

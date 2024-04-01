@@ -17,6 +17,7 @@ export function AreaForm(props: any) {
 
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
+  const [dis, setDis] = useState(false)
   const [area, setArea] = useState({
     id: '',
     name: '',
@@ -67,6 +68,8 @@ export function AreaForm(props: any) {
             message.error('Cập nhật khu vực thất bại!')
           })
         break
+      case 'DETAIL':
+        break
       default:
         break
     }
@@ -78,19 +81,28 @@ export function AreaForm(props: any) {
         setTitle('Thêm mới khu vực')
         setArea(openForm.area)
         setOpen(true)
+        setDis(false)
         form.setFieldsValue(openForm.area)
         break
       case 'UPDATE':
         setTitle('Sửa khu vực')
         setArea(openForm.area)
-        console.log('area: ' + openForm.area)
         setOpen(true)
+        setDis(false)
+        form.setFieldsValue(openForm.area)
+        break
+      case 'DETAIL':
+        setTitle('Xem chi tiết khu vực')
+        setArea(openForm.area)
+        setOpen(true)
+        setDis(true)
         form.setFieldsValue(openForm.area)
         break
       case 'CLOSE':
         setTitle('')
         setArea(openForm.area)
         setOpen(false)
+        setDis(false)
         form.setFieldsValue(openForm.area)
         break
       default:
@@ -116,16 +128,16 @@ export function AreaForm(props: any) {
             name="name"
             rules={[{ required: true, message: 'Vui lòng nhập tên khu vực!' }]}
           >
-            <Input className="w-full" size="large" />
+            <Input className="w-full" size="large" disabled={dis} />
           </Form.Item>
 
           <Form.Item label="Mã khu vực" name="code" rules={[{ required: true, message: 'Vui lòng nhập mã khu vực!' }]}>
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
         </div>
 
         <Form.Item label="Mô tả" name="description">
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} disabled={dis} />
         </Form.Item>
       </Form>
     </ChDrawer>

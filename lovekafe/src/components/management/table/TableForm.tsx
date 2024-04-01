@@ -1,4 +1,4 @@
-import { AutoComplete, Form, Input, message } from 'antd'
+import { Form, Input, message } from 'antd'
 import { useDispatch } from 'react-redux'
 import { useAraSelector } from '../../../store/ConfigStore'
 import ChDrawer from '../../ChComponent/ChDrawer'
@@ -20,6 +20,7 @@ export function TableForm(props: any) {
   const [form] = useForm()
 
   const [open, setOpen] = useState(false)
+  const [dis, setDis] = useState(false)
   const [title, setTitle] = useState('')
   const [areaName, setAreaName] = useState<any>('')
   const [table, setTable] = useState<TableModel>({
@@ -82,6 +83,8 @@ export function TableForm(props: any) {
             message.error('Cập nhật bàn thất bại!')
           })
         break
+      case 'DETAIL':
+        break
       default:
         break
     }
@@ -93,6 +96,7 @@ export function TableForm(props: any) {
         setTitle('Thêm mới bàn')
         setTable(openForm.table)
         form.setFieldsValue(openForm.table)
+        setDis(false)
         setOpen(true)
         break
       case 'UPDATE':
@@ -100,7 +104,15 @@ export function TableForm(props: any) {
         setTable(openForm.table)
         form.setFieldsValue(openForm.table)
         setAreaName(openForm.table.area?.name)
-        console.log(openForm.table.area?.name)
+        setDis(false)
+        setOpen(true)
+        break
+      case 'DETAIL':
+        setTitle('Xem chi tiết bàn')
+        setTable(openForm.table)
+        form.setFieldsValue(openForm.table)
+        setAreaName(openForm.table.area?.name)
+        setDis(true)
         setOpen(true)
         break
       case 'CLOSE':
@@ -108,6 +120,7 @@ export function TableForm(props: any) {
         setTable(openForm.table)
         form.setFieldsValue(openForm.table)
         setAreaName('')
+        setDis(false)
         setOpen(false)
         break
       default:
@@ -129,11 +142,11 @@ export function TableForm(props: any) {
       <Form onFinish={handleSaveForm} layout="vertical" form={form}>
         <div className="grid grid-cols-2 gap-2">
           <Form.Item label="Tên bàn" name="name" rules={[{ required: true, message: 'Vui lòng nhập tên bàn!' }]}>
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
 
           <Form.Item label="Mã bàn" name="code" rules={[{ required: true, message: 'Vui lòng nhập mã bàn!' }]}>
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
         </div>
 
@@ -143,6 +156,7 @@ export function TableForm(props: any) {
               size="large"
               apiName="Area"
               value={areaName}
+              disabled={dis}
               onChange={(value) => {
                 setAreaName(value)
               }}
@@ -151,7 +165,7 @@ export function TableForm(props: any) {
         </div>
 
         <Form.Item label="Mô tả" name="description">
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} disabled={dis} />
         </Form.Item>
       </Form>
     </ChDrawer>

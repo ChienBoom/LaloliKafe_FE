@@ -1,12 +1,12 @@
-import { Button, Flex, Image, Popconfirm, Table, Tooltip } from 'antd'
+import { Button, Flex, Image, Input, Popconfirm, Table, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
 import StaffForm from './StaffForm'
 import { useDispatch } from 'react-redux'
 import { StaffSlice } from './StaffSlice'
-import Search from 'antd/es/transfer/search'
 import { useAraSelector } from '../../../store/ConfigStore'
 import moment from 'moment'
+import Api from '../../../apis/Api'
 
 export function StaffTable(props: any) {
   const columns = [
@@ -69,7 +69,7 @@ export function StaffTable(props: any) {
       render: (text: any, record: any, index: any) => (
         <>
           <Tooltip placement="top" title="Xem chi tiết" arrow={true}>
-            <Button>
+            <Button onClick={() => handleClickDetail(record)}>
               <EyeOutlined />
             </Button>
           </Tooltip>
@@ -99,11 +99,22 @@ export function StaffTable(props: any) {
     }
   ]
 
-  const { staffData } = useAraSelector((state) => state.staff)
+  // const { staffData } = useAraSelector((state) => state.staff)
 
   const dispatch = useDispatch()
 
-  const [data, setData] = useState(staffData)
+  const [data, setData] = useState([])
+  const [dataShow, setDataShow] = useState([])
+  const [searchValue, setSearchValue] = useState('')
+
+  const handleClickDetail = (record: any) => {
+    dispatch(
+      StaffSlice.actions.handleStaffForm({
+        type: 'DETAIL',
+        staff: record
+      })
+    )
+  }
 
   const handleAddButton = () => {
     dispatch(
@@ -133,8 +144,26 @@ export function StaffTable(props: any) {
   }
 
   useEffect(() => {
-    setData(staffData)
-  }, [staffData])
+    Api.UserDetail.get({ role: 'User' }).then((res: any) => {
+      setData(res.data)
+      setDataShow(res.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (searchValue.trim() === '') {
+      setDataShow(data)
+    } else {
+      const newData = data.filter(function (item: any) {
+        return item.fullName
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .includes(searchValue.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+      })
+      setDataShow(newData)
+    }
+  }, [searchValue])
+
   return (
     <Flex vertical>
       <Flex className="mt-[20px] bg-white h-[60px]">
@@ -143,14 +172,19 @@ export function StaffTable(props: any) {
           <div className="text-2xl ml-[10px]">Quản lý nhân viên</div>
         </Flex>
         <Flex className="mt-[10px] h-[40px] items-center">
-          <Search placeholder="Tìm kiếm tên nhân viên" onChange={(e) => console.log('search')} />
+          <Input.Search
+            placeholder="Tìm kiếm tên nhân viên"
+            allowClear
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
           <Button className="absolute right-20" onClick={handleAddButton}>
             Thêm mới
             <PlusOutlined />
           </Button>
         </Flex>
       </Flex>
-      <Table columns={columns} dataSource={data} rowKey="id" pagination={false} />
+      <Table columns={columns} dataSource={dataShow} rowKey="id" pagination={false} />
       <StaffForm />
     </Flex>
   )

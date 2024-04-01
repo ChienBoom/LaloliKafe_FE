@@ -1,4 +1,10 @@
-import { PieChartOutlined, ProductOutlined, TableOutlined, TeamOutlined } from '@ant-design/icons'
+import {
+  PieChartOutlined,
+  ProductOutlined,
+  TableOutlined,
+  TeamOutlined,
+  UnorderedListOutlined
+} from '@ant-design/icons'
 import { Avatar, Flex, Layout, Menu, MenuProps, Typography } from 'antd'
 import { Content, Footer, Header } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
@@ -31,6 +37,7 @@ export function AppLayout(props: any) {
   const items: MenuItem[] = [
     getItem('Quản lý nhân viên', 'management/staff', <TeamOutlined />),
     getItem('Quản lý danh mục sản phẩm', 'management/category', <ProductOutlined />),
+    getItem('Quản lý sản phẩm', 'management/product', <UnorderedListOutlined />),
     getItem('Quản lý khu vực - bàn', 'management/area_table', <TableOutlined />, [
       getItem('Khu vực', 'management/area'),
       getItem('Bàn', 'management/table')

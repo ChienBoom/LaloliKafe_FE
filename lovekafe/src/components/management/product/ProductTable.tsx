@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
-import { Button, Flex, Image, Input, Popconfirm, Table, Tooltip } from 'antd'
+import { Button, Flex, Image, Input, message, Popconfirm, Table, Tooltip } from 'antd'
 import ProductForm from './ProductForm'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -63,7 +63,7 @@ export function ProductTable(props: any) {
       render: (text: any, record: any, index: any) => (
         <>
           <Tooltip placement="top" title="Xem chi tiết" arrow={true}>
-            <Button>
+            <Button onClick={() => handleClickDetail(record)}>
               <EyeOutlined />
             </Button>
           </Tooltip>
@@ -124,8 +124,16 @@ export function ProductTable(props: any) {
     )
   }
 
+  const handleClickDetail = (record: any) => {
+    dispatch(
+      ProductSlice.actions.handleProductForm({
+        type: 'DETAIL',
+        product: record
+      })
+    )
+  }
+
   const handleClickUpdate = (record: any) => {
-    console.log(record)
     dispatch(
       ProductSlice.actions.handleProductForm({
         type: 'UPDATE',
@@ -134,9 +142,27 @@ export function ProductTable(props: any) {
     )
   }
 
-  const handleConfirmDelete = (id: any) => {}
+  const handleConfirmDelete = (id: any) => {
+    Api.Product.delete(id)
+      .then((response: any) => {
+        message.success('Xóa bản ghi thành công')
+        handleReloadData()
+      })
+      .catch((error: any) => {
+        message.success('Xóa bản ghi thất bại')
+      })
+  }
 
-  const handleReloadData = () => {}
+  const handleReloadData = () => {
+    Api.Product.get({ categoryId: categoryId })
+      .then((response: any) => {
+        setData(response.data)
+        setDataShow(response.data)
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }
 
   useEffect(() => {
     Api.Product.get({ categoryId: categoryId })
@@ -189,7 +215,7 @@ export function ProductTable(props: any) {
           </Button>
         </Flex>
       </Flex>
-      <Table columns={columns} dataSource={dataShow} rowKey="id" pagination={false} />
+      <Table columns={columns} dataSource={dataShow} rowKey="id" />
       <ProductForm onReloadData={handleReloadData} />
     </Flex>
   )

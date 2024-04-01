@@ -22,6 +22,7 @@ export function CategoryForm(props: any) {
   const [img, setImg] = useState<any>('')
 
   const [open, setOpen] = useState(false)
+  const [dis, setDis] = useState(false)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState<CategoryModel>({
     id: '',
@@ -83,6 +84,8 @@ export function CategoryForm(props: any) {
             message.error('Cập nhật danh mục thất bại!')
           })
         break
+      case 'DETAIL':
+        break
       default:
         break
     }
@@ -93,18 +96,28 @@ export function CategoryForm(props: any) {
       case 'ADD':
         setTitle('Thêm mới danh mục')
         setCategory(openForm.category)
+        setDis(false)
         form.setFieldsValue(openForm.category)
         setOpen(true)
         break
       case 'UPDATE':
         setTitle('Sửa danh mục')
         setCategory(openForm.category)
+        setDis(false)
+        form.setFieldsValue(openForm.category)
+        setOpen(true)
+        break
+      case 'DETAIL':
+        setTitle('Xem chi tiết danh mục')
+        setCategory(openForm.category)
+        setDis(true)
         form.setFieldsValue(openForm.category)
         setOpen(true)
         break
       case 'CLOSE':
         setTitle('')
         setCategory(openForm.category)
+        setDis(false)
         form.setFieldsValue(openForm.category)
         setOpen(false)
         break
@@ -131,7 +144,7 @@ export function CategoryForm(props: any) {
             name="name"
             rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
           >
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
 
           <Form.Item
@@ -139,16 +152,16 @@ export function CategoryForm(props: any) {
             name="code"
             rules={[{ required: true, message: 'Vui lòng nhập mã danh mục!' }]}
           >
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
         </div>
 
         <Form.Item label="Mô tả" name="description">
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} disabled={dis} />
         </Form.Item>
 
         <Form.Item label="Tải ảnh lên" name="urlImg">
-          <Upload listType="picture-card" onChange={handleChangeUpload} fileList={fileList} maxCount={1}>
+          <Upload listType="picture-card" onChange={handleChangeUpload} fileList={fileList} maxCount={1} disabled={dis}>
             {'Upload'}
           </Upload>
         </Form.Item>

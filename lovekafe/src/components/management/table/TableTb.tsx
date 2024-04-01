@@ -1,4 +1,4 @@
-import { Button, Flex, Image, Input, message, Popconfirm, Table, Tooltip } from 'antd'
+import { Button, Flex, Input, message, Popconfirm, Table, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import Api from '../../../apis/Api'
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
@@ -54,7 +54,7 @@ export function TableTb(props: any) {
       render: (text: any, record: any, index: any) => (
         <>
           <Tooltip placement="top" title="Xem chi tiết" arrow={true}>
-            <Button>
+            <Button onClick={() => handleClickDetail(record)}>
               <EyeOutlined />
             </Button>
           </Tooltip>
@@ -89,6 +89,15 @@ export function TableTb(props: any) {
   const [data, setData] = useState([])
   const [dataShow, setDataShow] = useState([])
   const [searchValue, setSearchValue] = useState('')
+
+  const handleClickDetail = (record: any) => {
+    dispatch(
+      TableSlice.actions.handleTableForm({
+        type: 'DETAIL',
+        table: record
+      })
+    )
+  }
 
   const handleAddButton = () => {
     dispatch(

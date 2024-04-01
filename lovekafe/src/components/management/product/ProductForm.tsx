@@ -38,6 +38,7 @@ export function ProductForm(props: any) {
 
   const [title, setTitle] = useState('')
   const [open, setOpen] = useState(false)
+  const [dis, setDis] = useState(false)
   const [categoryName, setCategoryName] = useState<any>('')
 
   const [fileList, setFileList] = useState<UploadFile[]>([])
@@ -102,10 +103,11 @@ export function ProductForm(props: any) {
             message.error('Cập nhật sản phẩm thất bại!')
           })
         break
+      case 'DETAIL':
+        break
       default:
         break
     }
-    console.log(values)
   }
 
   useEffect(() => {
@@ -114,12 +116,22 @@ export function ProductForm(props: any) {
         setTitle('Thêm mới sản phẩm')
         setProduct(openForm.product)
         form.setFieldsValue(openForm.product)
+        setDis(false)
         setOpen(true)
         break
       case 'UPDATE':
         setTitle('Sửa sản phẩm')
         setProduct(openForm.product)
         form.setFieldsValue(openForm.product)
+        setDis(false)
+        setCategoryName(openForm.product.category?.name)
+        setOpen(true)
+        break
+      case 'DETAIL':
+        setTitle('Xem chi tiết sản phẩm')
+        setProduct(openForm.product)
+        form.setFieldsValue(openForm.product)
+        setDis(true)
         setCategoryName(openForm.product.category?.name)
         setOpen(true)
         break
@@ -127,6 +139,7 @@ export function ProductForm(props: any) {
         setTitle('')
         setProduct(openForm.product)
         form.setFieldsValue(openForm.product)
+        setDis(false)
         setCategoryName('')
         setOpen(false)
         break
@@ -149,11 +162,11 @@ export function ProductForm(props: any) {
       <Form onFinish={handleSaveForm} layout="vertical" form={form}>
         <div className="grid grid-cols-2 gap-2">
           <Form.Item label="Tên sản phẩm" name="name" rules={[{ required: true, message: 'Vui lòng nhập tên bàn!' }]}>
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
 
           <Form.Item label="Mã sản phẩm" name="code" rules={[{ required: true, message: 'Vui lòng nhập mã bàn!' }]}>
-            <Input size="large" />
+            <Input size="large" disabled={dis} />
           </Form.Item>
         </div>
 
@@ -166,6 +179,7 @@ export function ProductForm(props: any) {
             <ChSelect
               size="large"
               apiName="Category"
+              disabled={dis}
               value={categoryName}
               onChange={(value) => {
                 setCategoryName(value)
@@ -173,16 +187,16 @@ export function ProductForm(props: any) {
             />
           </Form.Item>
           <Form.Item label="Giá" name="price" rules={[{ required: true, message: 'Vui lòng nhập giá sản phẩm!' }]}>
-            <Input type="number" size="large" />
+            <Input type="number" size="large" disabled={dis} />
           </Form.Item>
         </div>
 
         <Form.Item label="Mô tả" name="description">
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} disabled={dis} />
         </Form.Item>
 
         <Form.Item label="Tải ảnh lên" name="urlImg">
-          <Upload listType="picture-card" onChange={handleChangeUpload} fileList={fileList} maxCount={1}>
+          <Upload listType="picture-card" onChange={handleChangeUpload} disabled={dis} fileList={fileList} maxCount={1}>
             {'Upload'}
           </Upload>
         </Form.Item>
