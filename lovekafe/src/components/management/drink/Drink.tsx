@@ -1,66 +1,124 @@
-import { UploadOutlined } from '@ant-design/icons'
-import { Button, Flex, Input, message, Upload, UploadProps } from 'antd'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { useState } from 'react'
-import { imageDb } from '../../../services/uploadFile/ConfigUpload'
-import { v4 } from 'uuid'
-import { UploadService } from '../../../services/uploadFile/UploadService'
-import { Console } from 'console'
+import { Button, Flex } from 'antd'
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from 'pdfmake/build/vfs_fonts'
+import { useEffect, useState } from 'react'
+import Api from '../../../apis/Api'
+import { ExportPdf } from '../../../utils/ExportPdf'
 
 export function Drink(props: any) {
-  const [img, setImg] = useState<any>('')
-  const [imgUuid, setImgUuid] = useState<any>('')
+  pdfMake.vfs = pdfFonts.pdfMake.vfs
 
-  const handleChangeUpload = (e: any) => {
-    console.log(e)
-    setImg(e.target.files[0])
-    setImgUuid(v4())
+  const [table, setTable] = useState([])
+  const [orderDetails, setOrderDetails] = useState([])
+
+  const invoiceData = {
+    customer: {
+      name: 'John Doe',
+      address: '123 Main Street, Anytown, USA'
+    },
+    items: [
+      { description: 'Coffee', quantity: 2, price: 3 },
+      { description: 'Croissant', quantity: 1, price: 2 }
+    ],
+    total: 8
   }
 
-  // const handleChangeUpload = (e: any) => {
-  //   if (e.file.status === 'done') {
-  //     console.log('File uploaded:', e.file)
-  //     setImg(e.file.originFileObj)
-  //     setImgUid(e.file.uid)
-  //   } else if (e.file.status === 'error') {
-  //     console.error('File upload error:', e.file.error)
-  //   }
-  // }
+  const documentDefinition = {
+    // content: [
+    pageSize: 'A5',
+    //   { text: 'LoveKafe', style: 'header' },
+    //   {
+    //     columns: [
+    //       {
+    //         width: '10%',
+    //         text: 'STT'
+    //       },
+    //       {
+    //         width: '40%',
+    //         text: 'Sản phẩm'
+    //       },
+    //       {
+    //         width: '10%',
+    //         text: 'SL'
+    //       },
+    //       {
+    //         width: '20%',
+    //         text: 'Gía SP'
+    //       },
+    //       {
+    //         width: '20%',
+    //         text: 'Thành tiền'
+    //       }
+    //     ],
+    //     // optional space between columns
+    //     columnGap: 10
+    //   }
+    // ],
 
-  const handleClickSend = async () => {
-    // if (img) {
-    //   const imgRef = ref(imageDb, `files/${imgUuid}`)
-    //   uploadBytes(imgRef, img)
-    //     .then(async (snapshot) => {
-    //       console.log('File uploaded successfully:', snapshot)
-    //       console.log(snapshot.metadata.fullPath)
-    //       const urlImage = await getDownloadURL(ref(imageDb, snapshot.metadata.fullPath))
-    //       console.log('url:', urlImage)
-    //     })
-    //     .catch((error) => {
-    //       console.error('Error uploading file:', error)
-    //     })
-    // } else {
-    //   console.error('No file selected.')
-    // }
-    const urlImg = await UploadService(img)
-    console.log('urlImg: ' + urlImg)
+    content: [
+      { text: 'LoveKafe', style: 'header' },
+      {
+        layout: 'lightHorizontalLines', // optional
+        table: {
+          // headers are automatically repeated if the table spans over multiple pages
+          // you can declare how many rows should be treated as headers
+          headerRows: 1,
+          widths: ['10%', '40%', '10%', '20%', '20%'],
+
+          body: [
+            ['STT', 'Sản phẩm', 'SL', 'Gía SP', 'Thành tiền'],
+            [1, 'Nước ép mận', '2', '35.000 VNĐ', '70.000 VNĐ'],
+            [{ text: 'Bold value', bold: true }, 'Val 2', 'Val 3', 'Val 4', 'val5']
+          ]
+        }
+      },
+      { qr: 'text in QR' }
+    ],
+    styles: {
+      header: {
+        fontSize: 22,
+        bold: true,
+        margin: [0, 0, 0, 50] as [number, number, number, number]
+      },
+      subheader: {
+        fontSize: 18,
+        bold: true,
+        margin: [0, 10, 0, 5] as [number, number, number, number]
+      }
+    }
   }
+
+  const handleClickSend = () => {
+    const result = ExportPdf(orderDetails, table)
+    // const pdfDoc = pdfMake.createPdf(documentDefinition as TDocumentDefinitions)
+    // pdfDoc.open()
+    // pdfDoc.download('invoice.pdf');
+  }
+
+  useEffect(() => {
+    Api.OrderDetail.get({ orderId: '31cdd07c-fde3-47f6-406e-08dc5388b91f' })
+      .then((res: any) => {
+        setOrderDetails(res.data)
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+
+    Api.Table.getById('9c664733-df53-4ffd-f580-08dc4d768712')
+      .then((res: any) => {
+        setTable(res)
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }, [])
+
   return (
-    <>
-      {/* <Upload name="file" onChange={handleChangeUpload}>
-        <Button icon={<UploadOutlined />}>Click to Upload</Button>
-      </Upload>
-      <Button onClick={handleClickSend}>Send</Button> */}
-
-      {/* <input type="file" className="" onChange={handleChangeUpload} /> */}
-      <Flex vertical>
-        <Input className="w-2/5" type="file" onChange={handleChangeUpload} />
-        <Button className="w-[60px]" onClick={handleClickSend}>
-          Send
-        </Button>
-      </Flex>
-    </>
+    <Flex vertical>
+      <Button className="w-[60px]" onClick={handleClickSend}>
+        Send
+      </Button>
+    </Flex>
   )
 }
 

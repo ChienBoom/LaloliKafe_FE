@@ -1,4 +1,5 @@
 import {
+  CheckSquareOutlined,
   PieChartOutlined,
   ProductOutlined,
   TableOutlined,
@@ -38,6 +39,7 @@ export function AppLayout(props: any) {
     getItem('Quản lý nhân viên', 'management/staff', <TeamOutlined />),
     getItem('Quản lý danh mục sản phẩm', 'management/category', <ProductOutlined />),
     getItem('Quản lý sản phẩm', 'management/product', <UnorderedListOutlined />),
+    getItem('Order', 'management/orderTable', <CheckSquareOutlined />),
     getItem('Quản lý khu vực - bàn', 'management/area_table', <TableOutlined />, [
       getItem('Khu vực', 'management/area'),
       getItem('Bàn', 'management/table')

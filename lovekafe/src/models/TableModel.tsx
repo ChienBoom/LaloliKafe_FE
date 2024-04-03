@@ -9,4 +9,6 @@ export interface TableModel {
   area?: AreaModel
   orders?: [OrderModel]
   description: string
+  isActive?: boolean
+  isDelete?: boolean
 }

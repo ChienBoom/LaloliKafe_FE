@@ -6,6 +6,8 @@ import { AreaSlice } from '../components/management/area/AreaSlice'
 import { TableSlice } from '../components/management/table/TableSlice'
 import { StaffSlice } from '../components/management/staff/StaffSlice'
 import { ProductSlice } from '../components/management/product/ProductSlice'
+import { OrderSlice } from '../components/management/order/OrderSlice'
+import { OrderTableSlice } from '../components/management/orderTable/OrderTableSlice'
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +15,9 @@ export const store = configureStore({
     area: AreaSlice.reducer,
     table: TableSlice.reducer,
     staff: StaffSlice.reducer,
-    product: ProductSlice.reducer
+    product: ProductSlice.reducer,
+    order: OrderSlice.reducer,
+    orderTable: OrderTableSlice.reducer
   }
 })
 

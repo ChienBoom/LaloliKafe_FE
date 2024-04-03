@@ -7,6 +7,7 @@ import { Area } from './Area'
 import { Table } from './Table'
 import { Product } from './Product'
 import { Order } from './Order'
+import { OrderDetail } from './OrderDetail'
 
 const responseBody = (response: AxiosResponse) => response.data
 
@@ -61,6 +62,7 @@ axios.interceptors.response.use(
  * Override method*/
 export const requests = {
   get: (url: string, params?: any) => axios.get(url, { params: getAxiosParams(params) }).then(responseBody),
+  getById: (url: string) => axios.get(url).then(responseBody),
   post: (url: string, body: any) => axios.post(url, body).then(responseBody),
   put: (url: string, body: any) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
@@ -80,7 +82,8 @@ const Api = {
   Area,
   Table,
   Product,
-  Order
+  Order,
+  OrderDetail
 } as any
 
 export default Api
