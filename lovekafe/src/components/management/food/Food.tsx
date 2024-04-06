@@ -1,94 +1,53 @@
-import { useState } from 'react'
-import { Form, Input, Upload } from 'antd'
-import type { GetProp, UploadFile, UploadProps } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import ChDrawer from '../../ChComponent/ChDrawer'
-import UploadService from '../../../services/uploadFile/UploadService'
-
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
+import { Button } from 'antd'
+import ExcelJS from 'exceljs'
+import { useEffect, useState } from 'react'
+import Api from '../../../apis/Api'
+import ReportExcel from '../../../utils/ReportExcel'
 
 export function Food(props: any) {
-  const [form] = Form.useForm()
+  // const workbook = new ExcelJS.Workbook()
+  // const worksheet = workbook.addWorksheet('My Sheet')
 
-  const [img, setImg] = useState<any>('')
+  // const [labels, setLabels] = useState([])
+  // const [revenues, setRevenues] = useState([])
+  const [data, setData] = useState([])
 
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  // Add data to the worksheet
+  // worksheet.addRow(['Name', 'Age'])
+  // worksheet.addRow(['John Doe', 30])
+  // worksheet.addRow(['Jane Smith', 25])
 
-  const handleCloseForm = () => {
-    setFileList([])
+  const handleExport = () => {
+    // worksheet.addRow(['STT', 'Tháng', 'Doanh thu'])
+    // labels.map((item: any, index) => {
+    //   worksheet.addRow([index + 1, item, revenues[index]])
+    // })
+    // // Save the workbook
+    // workbook.xlsx.writeBuffer().then((buffer) => {
+    //   // Do something with the buffer, for example, download it
+    //   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    //   const url = window.URL.createObjectURL(blob)
+    //   const a = document.createElement('a')
+    //   a.href = url
+    //   a.download = 'example.xlsx'
+    //   a.click()
+    //   window.URL.revokeObjectURL(url)
+    // })
+    ReportExcel(data)
   }
 
-  const handleChangeUpload = (lstFile: any) => {
-    setFileList(lstFile.fileList)
-    lstFile.fileList.length > 0 ? setImg(lstFile.fileList[0].originFileObj) : setImg('')
-  }
-
-  const handleSave = async (values: any) => {
-    const urlDowload = await UploadService(img)
-    values.urlImg = urlDowload
-    console.log('form', values)
-    console.log('urlDowload', urlDowload)
-    // console.log('Obj: ', obj)
-  }
-
-  const onPreview = async (file: UploadFile) => {
-    let src = file.url as string
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file.originFileObj as FileType)
-        reader.onload = () => resolve(reader.result as string)
+  useEffect(() => {
+    Api.Revenue.getDataTypeProduct()
+      .then((res: any) => {
+        // setLabels(res.labels)
+        // setRevenues(res.revenues)
+        setData(res)
       })
-    }
-    const image = new Image()
-    image.src = src
-    const imgWindow = window.open(src)
-    imgWindow?.document.write(image.outerHTML)
-  }
-
-  return (
-    <ChDrawer
-      title="Test Form"
-      showFooterAction={true}
-      open={true}
-      onClose={handleCloseForm}
-      closeIcon={true}
-      onFtSave={() => form.submit()}
-      iconTitle={<PlusOutlined />}
-    >
-      <Form onFinish={handleSave} layout="vertical" form={form}>
-        <div className="grid grid-cols-2 gap-2">
-          <Form.Item
-            label="Tên khu vực"
-            name="name"
-            rules={[{ required: true, message: 'Vui lòng nhập tên khu vực!' }]}
-          >
-            <Input className="w-full" size="large" />
-          </Form.Item>
-
-          <Form.Item label="Mã khu vực" name="code" rules={[{ required: true, message: 'Vui lòng nhập mã khu vực!' }]}>
-            <Input size="large" />
-          </Form.Item>
-        </div>
-
-        <Form.Item label="Mô tả" name="description">
-          <Input.TextArea rows={4} />
-        </Form.Item>
-
-        <Form.Item label="Tải ảnh lên" name="urlImg" rules={[{ required: true, message: 'Vui lòng chọn ảnh!' }]}>
-          <Upload
-            listType="picture-card"
-            onChange={handleChangeUpload}
-            onPreview={onPreview}
-            fileList={fileList}
-            maxCount={1}
-          >
-            {'Upload'}
-          </Upload>
-        </Form.Item>
-      </Form>
-    </ChDrawer>
-  )
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }, [])
+  return <Button onClick={handleExport}>Export</Button>
 }
 
 export default Food

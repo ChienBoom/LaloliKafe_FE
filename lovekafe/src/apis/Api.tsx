@@ -8,6 +8,7 @@ import { Table } from './Table'
 import { Product } from './Product'
 import { Order } from './Order'
 import { OrderDetail } from './OrderDetail'
+import { Revenue } from './Revenue'
 
 const responseBody = (response: AxiosResponse) => response.data
 
@@ -83,7 +84,8 @@ const Api = {
   Table,
   Product,
   Order,
-  OrderDetail
+  OrderDetail,
+  Revenue
 } as any
 
 export default Api

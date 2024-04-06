@@ -6,7 +6,6 @@ import Logout from '../components/Log/Logout/Logout'
 import LogLayout from '../components/layout/LogLayout'
 import Staff from '../components/management/staff/Staff'
 import Drink from '../components/management/drink/Drink'
-import Report from '../components/management/report/Report'
 import Table from '../components/management/table/Table'
 import Food from '../components/management/food/Food'
 import Area from '../components/management/area/Area'
@@ -14,6 +13,7 @@ import Category from '../components/management/category/Category'
 import Product from '../components/management/product/Product'
 import Order from '../components/management/order/Order'
 import OrderTable from '../components/management/orderTable/OrderTable'
+import Revenue from '../components/management/revenue/Revenue'
 
 export const Router = createBrowserRouter([
   {
@@ -49,8 +49,8 @@ export const Router = createBrowserRouter([
         element: <Table />
       },
       {
-        path: 'management/report',
-        element: <Report />
+        path: 'management/revenue',
+        element: <Revenue />
       },
       {
         path: 'management/category/:categoryId',
@@ -71,7 +71,7 @@ export const Router = createBrowserRouter([
     ]
   },
   {
-    path: '/log',
+    path: '/',
     element: <LogLayout />,
     children: [
       {
@@ -87,5 +87,9 @@ export const Router = createBrowserRouter([
       //   element: <Logout />
       // }
     ]
+  },
+  {
+    path: '/',
+    element: <Login />
   }
 ])

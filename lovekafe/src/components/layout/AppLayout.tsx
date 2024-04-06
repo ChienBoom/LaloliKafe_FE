@@ -44,7 +44,7 @@ export function AppLayout(props: any) {
       getItem('Khu vực', 'management/area'),
       getItem('Bàn', 'management/table')
     ]),
-    getItem('Báo cáo doanh thu', 'management/report', <PieChartOutlined />)
+    getItem('Báo cáo doanh thu', 'management/revenue', <PieChartOutlined />)
   ]
 
   const [collapsed, setCollapsed] = useState(false)
