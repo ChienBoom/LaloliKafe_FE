@@ -33,7 +33,7 @@ export function Food(props: any) {
     //   a.click()
     //   window.URL.revokeObjectURL(url)
     // })
-    ReportExcel(data)
+    ReportExcel(data, 'Báo cáo doanh thu', 'Product')
   }
 
   useEffect(() => {
