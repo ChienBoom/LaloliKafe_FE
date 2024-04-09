@@ -1,15 +1,22 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, MenuProps } from 'antd'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { LoginSlice } from '../../Log/Login/LoginSlice'
 
 export function AppHeader(props: any) {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const handleClickLogout = () => {
+    dispatch(LoginSlice.actions.setAccessToken(null))
+    localStorage.removeItem('accessToken')
+    navigate('login')
+  }
+
   const items: MenuProps['items'] = [
     {
       key: '1',
-      label: (
-        <a rel="noopener noreferrer" href="http://localhost:4321/log/login">
-          Đăng xuất
-        </a>
-      )
+      label: <div onClick={handleClickLogout}>Đăng xuất</div>
     }
   ]
 

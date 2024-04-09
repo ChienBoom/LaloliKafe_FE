@@ -1,9 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Home from '../components/management/home/Home'
-import AppLayout from '../components/layout/AppLayout'
 import Login from '../components/Log/Login/Login'
-import Logout from '../components/Log/Logout/Logout'
-import LogLayout from '../components/layout/LogLayout'
 import Staff from '../components/management/staff/Staff'
 import Drink from '../components/management/drink/Drink'
 import Table from '../components/management/table/Table'
@@ -14,14 +11,20 @@ import Product from '../components/management/product/Product'
 import Order from '../components/management/order/Order'
 import OrderTable from '../components/management/orderTable/OrderTable'
 import Revenue from '../components/management/revenue/Revenue'
+import Auth from './Auth'
+import Register from '../components/Log/Register/Register'
 
 export const Router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
+    element: <Auth />,
     children: [
       {
-        path: 'management/home',
+        path: '',
+        element: <Home />
+      },
+      {
+        path: 'home',
         element: <Home />
       },
       {
@@ -71,25 +74,11 @@ export const Router = createBrowserRouter([
     ]
   },
   {
-    path: '/',
-    element: <LogLayout />,
-    children: [
-      {
-        path: 'login',
-        element: <Login />
-      },
-      {
-        path: 'logout',
-        element: <Logout />
-      }
-      // {
-      //   path: '/register',
-      //   element: <Logout />
-      // }
-    ]
+    path: 'login',
+    element: <Login />
   },
   {
-    path: '/',
-    element: <Login />
+    path: 'register',
+    element: <Register />
   }
 ])

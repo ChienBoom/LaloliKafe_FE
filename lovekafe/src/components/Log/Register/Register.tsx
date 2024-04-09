@@ -1,32 +1,24 @@
 import { Button, Flex, Image, Input, Typography } from 'antd'
 import { useState } from 'react'
-import Api from '../../../apis/Api'
-import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { LoginSlice } from './LoginSlice'
 import logo from '../../assets/logo.png'
 
 const { Title } = Typography
 
-export function Login(props: any) {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+export function Register(props: any) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleClickLogin = () => {
-    Api.Auth.login({
-      username: username,
-      password: password
-    })
-      .then((res: any) => {
-        localStorage.setItem('accessToken', res.token)
-        dispatch(LoginSlice.actions.setAccessToken(res.token))
-        navigate('/home')
-      })
-      .catch((error: any) => {
-        console.log(error)
-      })
+  const handleClickRegister = () => {
+    // Api.Auth.login({
+    //   username: username,
+    //   password: password
+    // })
+    //   .then((res: any) => {
+    //     navigate('register')
+    //   })
+    //   .catch((error: any) => {
+    //     console.log(error)
+    //   })
   }
 
   return (
@@ -42,7 +34,7 @@ export function Login(props: any) {
           <Flex vertical className="mt-[20px] ml-[10px] mr-[10px]">
             <Flex vertical className="items-center">
               <Title level={4} type="warning">
-                Đăng nhập LoveKafe
+                Đăng ký LoveKafe
               </Title>
             </Flex>
             <Flex vertical className="mt-[20px]">
@@ -55,11 +47,11 @@ export function Login(props: any) {
               <Title level={5} type="warning">
                 Mật khẩu
               </Title>
-              <Input.Password className="h-[50px]" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input className="h-[50px]" value={password} onChange={(e) => setPassword(e.target.value)} />
             </Flex>
             <Flex vertical className="mt-[40px]">
-              <Button className="h-[40px] text-amber-500 mb-[30px]" onClick={handleClickLogin}>
-                Đăng nhập
+              <Button className="h-[40px] text-amber-500 mb-[30px]" onClick={handleClickRegister}>
+                Đăng ký
               </Button>
             </Flex>
           </Flex>
@@ -69,4 +61,4 @@ export function Login(props: any) {
   )
 }
 
-export default Login
+export default Register

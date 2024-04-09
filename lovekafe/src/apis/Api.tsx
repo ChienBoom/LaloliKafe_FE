@@ -9,6 +9,7 @@ import { Product } from './Product'
 import { Order } from './Order'
 import { OrderDetail } from './OrderDetail'
 import { Revenue } from './Revenue'
+import { Auth } from './Auth'
 
 const responseBody = (response: AxiosResponse) => response.data
 
@@ -85,7 +86,8 @@ const Api = {
   Product,
   Order,
   OrderDetail,
-  Revenue
+  Revenue,
+  Auth
 } as any
 
 export default Api

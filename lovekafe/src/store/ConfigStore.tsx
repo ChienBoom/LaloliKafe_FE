@@ -8,6 +8,7 @@ import { StaffSlice } from '../components/management/staff/StaffSlice'
 import { ProductSlice } from '../components/management/product/ProductSlice'
 import { OrderSlice } from '../components/management/order/OrderSlice'
 import { OrderTableSlice } from '../components/management/orderTable/OrderTableSlice'
+import { LoginSlice } from '../components/Log/Login/LoginSlice'
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +18,8 @@ export const store = configureStore({
     staff: StaffSlice.reducer,
     product: ProductSlice.reducer,
     order: OrderSlice.reducer,
-    orderTable: OrderTableSlice.reducer
+    orderTable: OrderTableSlice.reducer,
+    auth: LoginSlice.reducer
   }
 })
 

@@ -1,5 +1,7 @@
 import { requests } from './Api'
 
 export const Auth = {
-  getAccessToken: (body: any) => requests.postForm('sts/getaccesstoken', body)
+  login: (body: any) => requests.post('api/Auth/login', body),
+  register: (body: any) => requests.post('api/Auth/register', body),
+  registerAdmin: (body: any) => requests.post('api/Auth/register-admin', body)
 }
