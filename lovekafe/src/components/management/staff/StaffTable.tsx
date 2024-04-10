@@ -4,7 +4,6 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined }
 import StaffForm from './StaffForm'
 import { useDispatch } from 'react-redux'
 import { StaffSlice } from './StaffSlice'
-import { useAraSelector } from '../../../store/ConfigStore'
 import moment from 'moment'
 import Api from '../../../apis/Api'
 
@@ -52,13 +51,7 @@ export function StaffTable(props: any) {
       key: 'urlImage',
       width: '10%',
       align: 'center' as const,
-      render: (text: any, record: any, index: any) => (
-        <Image
-          width={20}
-          height={20}
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-        />
-      )
+      render: (text: any, record: any, index: any) => <Image width={20} height={20} src={text} />
     },
     {
       title: 'Thao tác',

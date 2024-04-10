@@ -22,6 +22,7 @@ export function Login(props: any) {
       .then((res: any) => {
         localStorage.setItem('accessToken', res.token)
         dispatch(LoginSlice.actions.setAccessToken(res.token))
+        dispatch(LoginSlice.actions.setUserProfile(res.userDetail))
         navigate('/home')
       })
       .catch((error: any) => {
