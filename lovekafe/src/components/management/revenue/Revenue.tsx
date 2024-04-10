@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { Button, Flex, Radio, Select, Space } from 'antd'
 import RevenueChart from './RevenueChart'
 import Api from '../../../apis/Api'
-import { error } from 'console'
 import { SwapOutlined } from '@ant-design/icons'
+import ReportExcel from '../../../utils/ReportExcel'
 
 export function Revenue(props: any) {
   const options = [
@@ -20,6 +20,17 @@ export function Revenue(props: any) {
 
   const handleChange = (e: any) => {
     setRevenueType(e)
+  }
+
+  const handlerReportExcel = () => {
+    ReportExcel(
+      {
+        labels: labels,
+        revenues: revenues
+      },
+      'Báo cáo doanh thu',
+      revenueType
+    )
   }
 
   useEffect(() => {
@@ -81,7 +92,9 @@ export function Revenue(props: any) {
             onChange={handleChange}
             options={options}
           />
-          <Button className="w-3/4 mt-[20px]">Xuất báo cáo</Button>
+          <Button className="w-3/4 mt-[20px]" onClick={handlerReportExcel}>
+            Xuất báo cáo
+          </Button>
           <Radio.Group className="mt-[50px]" onChange={(e: any) => setTypeChart(e.target.value)} value={typeChart}>
             <Space direction="vertical">
               <Radio value={'bar'}>Bar</Radio>
