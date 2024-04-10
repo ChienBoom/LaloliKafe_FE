@@ -11,6 +11,7 @@ const initialState: InitialState = {
     user: {
         id: "",
         username: "",
+        role: "",
         email: "",
         fullName: "",
         dateOfBirth: "",

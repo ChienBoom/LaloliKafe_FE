@@ -18,9 +18,10 @@ const initialState: InitialState = {
         staff:{
             id: "",
             username: "",
+            role: 'User',
             email: "",
             fullName: "",
-            dateOfBirth: "2024-03-25T08:32:06.391",
+            dateOfBirth: "",
             address: "",
             sex: "",
             urlImage: ""

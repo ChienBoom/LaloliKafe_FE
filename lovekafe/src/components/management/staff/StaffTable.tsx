@@ -4,6 +4,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, SwapOutlined }
 import StaffForm from './StaffForm'
 import { useDispatch } from 'react-redux'
 import { StaffSlice } from './StaffSlice'
+import dayjs from 'dayjs'
 import moment from 'moment'
 import Api from '../../../apis/Api'
 
@@ -116,6 +117,7 @@ export function StaffTable(props: any) {
         staff: {
           id: '',
           username: '',
+          role: 'User',
           email: '',
           fullName: '',
           dateOfBirth: moment(moment.now()).format(),
@@ -127,6 +129,8 @@ export function StaffTable(props: any) {
     )
   }
 
+  // dayjs(moment(moment(moment.now()).format()).format('DD/MM/YYYY'))
+
   const handleClickUpdate = (record: any) => {
     dispatch(
       StaffSlice.actions.handleStaffForm({
@@ -134,6 +138,13 @@ export function StaffTable(props: any) {
         staff: record
       })
     )
+  }
+
+  const handleReloadData = () => {
+    Api.UserDetail.get({ role: 'User' }).then((res: any) => {
+      setData(res.data)
+      setDataShow(res.data)
+    })
   }
 
   useEffect(() => {
@@ -178,7 +189,7 @@ export function StaffTable(props: any) {
         </Flex>
       </Flex>
       <Table columns={columns} dataSource={dataShow} rowKey="id" pagination={false} />
-      <StaffForm />
+      <StaffForm onReloadData={handleReloadData} />
     </Flex>
   )
 }

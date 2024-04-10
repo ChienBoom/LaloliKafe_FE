@@ -1,4 +1,4 @@
-import { DatePicker, Flex, Input, Select, Typography, Upload } from 'antd'
+import { DatePicker, Flex, Input, message, Select, Typography, Upload, UploadFile } from 'antd'
 import { useDispatch } from 'react-redux'
 import { useAraSelector } from '../../../store/ConfigStore'
 import ChDrawer from '../../ChComponent/ChDrawer'
@@ -8,6 +8,9 @@ import { StaffSlice } from './StaffSlice'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import { UserDetailModel } from '../../../models/UserDetailModel'
+import UploadService from '../../../services/uploadFile/UploadService'
+import { error, log } from 'console'
+import Api from '../../../apis/Api'
 
 const { Title } = Typography
 
@@ -17,21 +20,17 @@ export function StaffForm(props: any) {
   const dispatch = useDispatch()
 
   const { openForm } = useAraSelector((state) => state.staff)
+  const { onReloadData } = props
 
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [img, setImg] = useState<any>('')
-  // const [fileList, setFileList] = useState<UploadFile[]>([
-  //   {
-  //     uid: '-1',
-  //     name: 'image.png',
-  //     status: 'done',
-  //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
-  //   }
-  // ])
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+
   const [staff, setStaff] = useState<UserDetailModel>({
     id: '',
     username: '',
+    role: 'User',
     email: '',
     fullName: '',
     dateOfBirth: '',
@@ -40,25 +39,10 @@ export function StaffForm(props: any) {
     urlImage: ''
   })
 
-  const handleChangeUpload = (e: any) => {
-    console.log(e)
-    setImg(e.file.originFileObj)
+  const handleChangeUpload = (lstFile: any) => {
+    setFileList(lstFile.fileList)
+    lstFile.fileList.length > 0 ? setImg(lstFile.fileList[0].originFileObj) : setImg('')
   }
-
-  // const onPreview = async (file: any) => {
-  //   let src = file.url as string
-  //   if (!src) {
-  //     src = await new Promise((resolve) => {
-  //       const reader = new FileReader()
-  //       reader.readAsDataURL(file.originFileObj as FileType)
-  //       reader.onload = () => resolve(reader.result as string)
-  //     })
-  //   }
-  //   const image = new Image()
-  //   image.src = src
-  //   const imgWindow = window.open(src)
-  //   imgWindow?.document.write(image.outerHTML)
-  // }
 
   const handleCloseForm = () => {
     dispatch(
@@ -76,11 +60,59 @@ export function StaffForm(props: any) {
         }
       })
     )
+    setFileList([])
+    setImg('')
   }
 
-  const handleSaveForm = () => {
+  const handleSaveForm = async () => {
+    var urlImg = await UploadService(img)
+    console.log('staff: ', staff)
+    console.log('url: ', urlImg)
     switch (openForm.type) {
       case 'ADD':
+        Api.UserDetail.post({
+          username: staff.email,
+          role: staff.role,
+          email: staff.email,
+          fullName: staff.fullName,
+          dateOfBirth: staff.dateOfBirth,
+          address: staff.address,
+          sex: staff.sex,
+          urlImage: urlImg ?? staff.urlImage
+        })
+          .then((res: any) => {
+            onReloadData()
+            message.success('Thêm mới nhân viên thành công')
+          })
+          .catch((error: any) => {
+            message.error('Thêm mới nhân viên thất bại')
+            console.log(error)
+          })
+        break
+      case 'UPDATE':
+        Api.UserDetail.put(staff.id, {
+          id: staff.id,
+          username: staff.email,
+          role: staff.role,
+          email: staff.email,
+          fullName: staff.fullName,
+          dateOfBirth: staff.dateOfBirth,
+          address: staff.address,
+          sex: staff.sex,
+          urlImage: urlImg ?? staff.urlImage
+        })
+          .then((res: any) => {
+            onReloadData()
+            message.success('Cập nhật thông tin nhân viên thành công')
+            handleCloseForm()
+          })
+          .catch((error: any) => {
+            message.error('Cập nhật thông tin nhân viên thất bại')
+            console.log(error)
+          })
+        break
+      default:
+        break
     }
   }
 
@@ -128,6 +160,7 @@ export function StaffForm(props: any) {
               setStaff({
                 id: staff.id,
                 username: staff.username,
+                role: staff.role,
                 email: staff.email,
                 fullName: e.target.value,
                 dateOfBirth: staff.dateOfBirth,
@@ -147,8 +180,9 @@ export function StaffForm(props: any) {
               setStaff({
                 id: staff.id,
                 username: staff.username,
+                role: staff.role,
                 email: e.target.value,
-                fullName: staff.email,
+                fullName: staff.fullName,
                 dateOfBirth: staff.dateOfBirth,
                 address: staff.address,
                 sex: staff.sex,
@@ -168,6 +202,7 @@ export function StaffForm(props: any) {
               setStaff({
                 id: staff.id,
                 username: staff.username,
+                role: staff.role,
                 email: staff.email,
                 fullName: staff.fullName,
                 dateOfBirth: staff.dateOfBirth,
@@ -192,6 +227,7 @@ export function StaffForm(props: any) {
               setStaff({
                 id: staff.id,
                 username: staff.username,
+                role: staff.role,
                 email: staff.email,
                 fullName: staff.fullName,
                 dateOfBirth: moment(dateString, 'DD/MM/YYYY').format(),
@@ -213,6 +249,7 @@ export function StaffForm(props: any) {
             setStaff({
               id: staff.id,
               username: staff.username,
+              role: staff.role,
               email: staff.email,
               fullName: staff.fullName,
               dateOfBirth: staff.dateOfBirth,
@@ -225,12 +262,7 @@ export function StaffForm(props: any) {
       </Flex>
       <Flex vertical className="mt-[20px]">
         <Title level={4}>Tải ảnh cho nhân viên</Title>
-        <Upload
-          listType="picture-card"
-          onChange={handleChangeUpload}
-          // onPreview={onPreview}
-          maxCount={1}
-        >
+        <Upload listType="picture-card" onChange={handleChangeUpload} maxCount={1}>
           {'Upload'}
         </Upload>
       </Flex>
