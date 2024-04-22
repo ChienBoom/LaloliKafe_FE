@@ -9,11 +9,14 @@ import {
 import { Avatar, Flex, Layout, Menu, MenuProps, Typography } from 'antd'
 import { Content, Footer, Header } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import AppHeader from './header/AppHeader'
 import AppFooter from './footer/AppFooter'
+import Api from '../../apis/Api'
+import { useDispatch } from 'react-redux'
+import { LoginSlice } from '../Log/Login/LoginSlice'
 
 const { Title } = Typography
 
@@ -30,6 +33,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 export function AppLayout(props: any) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleClickMenu = (item: any) => {
     navigate(item.key)
@@ -48,6 +52,17 @@ export function AppLayout(props: any) {
   ]
 
   const [collapsed, setCollapsed] = useState(false)
+
+  useEffect(() => {
+    Api.Auth.getProfile()
+      .then((res: any) => {
+        // console.log(res)
+        dispatch(LoginSlice.actions.setUserProfile(res))
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }, [])
 
   return (
     <Layout style={{ minHeight: '150vh' }}>
