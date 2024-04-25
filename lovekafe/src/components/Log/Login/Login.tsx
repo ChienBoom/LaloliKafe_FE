@@ -20,8 +20,11 @@ export function Login(props: any) {
       password: password
     })
       .then((res: any) => {
-        localStorage.setItem('accessToken', res.token)
-        dispatch(LoginSlice.actions.setAccessToken(res.token))
+        localStorage.setItem('refreshToken', res.refreshToken)
+        localStorage.setItem('accessToken', res.accessToken)
+        localStorage.setItem('expirationRefreshToken', res.expirationRefreshToken)
+        localStorage.setItem('expirationAccessToken', res.expirationAccessToken)
+        dispatch(LoginSlice.actions.setAccessToken(res.accessToken))
         dispatch(LoginSlice.actions.setUserProfile(res.userDetail))
         navigate('/home')
       })

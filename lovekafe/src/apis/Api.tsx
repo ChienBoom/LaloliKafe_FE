@@ -1,5 +1,5 @@
 import { notification } from 'antd'
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { getAxiosParams, sleep } from '../utils/Utils'
 import { Category } from './Category'
 import { UserDetail } from './UserDetail'
@@ -10,8 +10,20 @@ import { Order } from './Order'
 import { OrderDetail } from './OrderDetail'
 import { Revenue } from './Revenue'
 import { Auth } from './Auth'
+import Login from '../components/Log/Login/Login'
+import moment from 'moment'
 
 const responseBody = (response: AxiosResponse) => response.data
+
+const refreshToken = async () => {
+  try {
+    const refreshToken = localStorage.getItem('refreshToken')
+    const response = await Api.Auth.getAccessToken({ refreshToken: refreshToken })
+    return response.accessToken
+  } catch (error) {
+    throw error
+  }
+}
 
 /**
  * Cấu hình API URL
@@ -34,13 +46,29 @@ axios.interceptors.response.use(
     if (process.env.NODE_ENV === 'development') await sleep()
     return response
   },
-  (error: AxiosError) => {
+  async (error) => {
     const { status } = error.response as AxiosResponse
+    const originalRequest = error?.config
     switch (status) {
       case 400:
         notification.error({ message: 'Có lỗi xảy ra !' })
         break
       case 401:
+        if (!originalRequest._retry) {
+          originalRequest._retry = true
+          const expirationRefreshToken = localStorage.getItem('expirationRefreshToken')
+          const expirationAccessToken = localStorage.getItem('expirationAccessToken')
+          const curentTime = moment()
+          if (curentTime.isAfter(expirationAccessToken) && curentTime.isAfter(expirationRefreshToken)) {
+            return <Login />
+          }
+          if (curentTime.isAfter(expirationAccessToken)) {
+            const accessToken = await refreshToken()
+            localStorage.setItem('accessToken', accessToken)
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+            return axios.request(originalRequest)
+          }
+        }
         notification.error({ message: 'Có lỗi xác thực !' })
         break
       case 403:
