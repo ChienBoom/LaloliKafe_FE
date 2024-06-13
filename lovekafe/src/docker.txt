@@ -1,0 +1,4 @@
+build docker image:
+docker build -t my-react-app .
+chạy container: 
+docker run -p 3000:80 lalolikafe
